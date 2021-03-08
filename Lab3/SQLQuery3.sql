@@ -8,9 +8,11 @@ SELECT count(*) From STUDENT;
 -- Where, Distinct, Top
 SELECT [Номер зачётки], [Фамилия студента] From STUDENT
 	Where POL = 'ж'
+SELECT [Номер зачётки], [Фамилия студента] From STUDENT order by [Номер зачётки] Desc
 SELECT Distinct Top(5) [Фамилия студента] From STUDENT
 -- UPDATE 
 UPDATE STUDENT set [Номер группы] = 5;
+SELECT * from STUDENT;
 -- DELETE
 DELETE from STUDENT Where [Номер зачётки] = '245kl321';
 -- BETWEEN
@@ -19,5 +21,5 @@ SELECT [Номер зачётки], [Фамилия студента] From STUDENT WHERE [Фамилия студента]
 SELECT [Фамилия студента] From STUDENT WHERE [Фамилия студента] Like 'А%';
 -- In
 SELECT [Номер зачётки], [Фамилия студента] From STUDENT WHERE [Фамилия студента] In ('Демьянов', 'Иванов');
--- Удаление таблицы
+-- Удаление таблицыW
 DROP table STUDENT;

@@ -6,7 +6,7 @@ CREATE Table RESULTS
 	MARK2 int not null,
 	AVER_VALUE as (MARK1 + MARK2) / 2
 );
-
+SELECT * from RESULTS;
 INSERT into RESULTS (STUDENT_NAME, MARK1, MARK2)
 	values ('Петров', 2, 7),
 		   ('Иванов', 8, 4),
