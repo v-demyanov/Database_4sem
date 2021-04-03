@@ -18,7 +18,7 @@ FROM  TEACHER FULL OUTER JOIN CURRICULUM
 ON CURRICULUM.TEACHER = TEACHER.TEACHER_KEY
 WHERE CURRICULUM.CURRICULUM_KEY IS NULL;
 
--- запрос, результат которого содержит данные правой таблицы и не содержащие данные ле-вой
+-- запрос, результат которого содержит данные правой таблицы и не содержащие данные левой
 SELECT *
 FROM  CURRICULUM FULL OUTER JOIN TEACHER 
 ON CURRICULUM.TEACHER = TEACHER.TEACHER_KEY
