@@ -1,0 +1,60 @@
+USE DVR_MyBase_Test;
+
+CREATE VIEW [Учебный план]
+	AS SELECT CURRICULUM.CURRICULUM_KEY[Код],
+			  CURRICULUM.TEACHER[Преподаватель],
+			  CURRICULUM.GROUP_NUMBER[Номер группы],
+			  CURRICULUM.CLASS_TYPE[Тип аудитории],
+			  CURRICULUM.HOURS_NUMBERS[Количество часов],
+			  CURRICULUM.PAYMENT[Оплата],
+			  CURRICULUM.SUBJECT[Предмет]
+	FROM CURRICULUM;
+
+SELECT * FROM [Учебный план];
+
+--  представление которое не позволяет выполнять операции INSERT, DELETE, UPDATE
+CREATE VIEW [Учебный план 2]
+	AS SELECT CONCAT(TEACHER.TEACHER_LAST_NAME,' ',TEACHER.TEACHER_NAME,' ',TEACHER.TEACHER_MIDDLE_NAME)[Преподаватель],
+			  CURRICULUM.GROUP_NUMBER[Группа]
+			  FROM TEACHER JOIN CURRICULUM
+			  ON TEACHER.TEACHER_KEY = CURRICULUM.TEACHER;
+
+SELECT * FROM [Учебный план 2];
+
+UPDATE [Учебный план 2]
+SET [Преподаватель] = 'Иванов Иван Русланович'
+WHERE [Преподаватель] = 'Иванов Иван Иванович';
+
+-- CHECK OPTION
+CREATE VIEW [Учебный план 3]
+	AS SELECT CURRICULUM.CURRICULUM_KEY[Код],
+			  CURRICULUM.TEACHER[Преподаватель],
+			  CURRICULUM.GROUP_NUMBER[Номер группы],
+			  CURRICULUM.CLASS_TYPE[Тип аудитории],
+			  CURRICULUM.HOURS_NUMBERS[Количество часов],
+			  CURRICULUM.PAYMENT[Оплата],
+			  CURRICULUM.SUBJECT[Предмет]
+	FROM CURRICULUM
+	WHERE CURRICULUM.HOURS_NUMBERS > 100
+	WITH CHECK OPTION;
+
+SELECT * FROM [Учебный план 3];
+INSERT [Учебный план 3] VALUES('6k', 't3', 4, 'Лекция', 10, 200, 'Английский');
+
+-- ORDER BY
+CREATE VIEW [Предмет]
+	AS SELECT TOP(150) SUBJECT.SUBJECT[Предмет]
+	FROM SUBJECT ORDER BY SUBJECT.SUBJECT;
+
+SELECT * FROM [Предмет];
+
+-- WITH SCHEMABINDING 
+CREATE VIEW [Учебный план 4] WITH SCHEMABINDING 
+	AS SELECT CONCAT(TEACHER.TEACHER_LAST_NAME,' ',TEACHER.TEACHER_NAME,' ',TEACHER.TEACHER_MIDDLE_NAME)[Преподаватель],
+			  CURRICULUM.GROUP_NUMBER[Группа]
+			  FROM dbo.TEACHER JOIN dbo.CURRICULUM
+			  ON TEACHER.TEACHER_KEY = CURRICULUM.TEACHER;
+
+SELECT * FROM [Учебный план 4];
+
+DROP TABLE CURRICULUM;
