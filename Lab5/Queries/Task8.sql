@@ -1,6 +1,6 @@
 USE DVR_MyBase_Test;
 
--- показать коммутативность
+-- показать коммутативность FULL OUTER JOIN
 -- объединение LEFT JOIN and RIGHT JOIN
 -- включение INNER JOIN
 SELECT *

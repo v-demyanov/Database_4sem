@@ -1,6 +1,5 @@
 USE DVR_UNIVER;
 
-
 -- 1. На основе таблицы AUDITORIUM разработать SELECT-запрос,
 -- вычисляющий максимальную, минимальную и среднюю вместимость аудиторий,
 -- суммарную вместимость всех аудиторий и общее количество аудиторий.
@@ -209,45 +208,17 @@ HAVING p1.NOTE = 9 OR p1.NOTE = 8;
 -- 12*. Подсчитать количество студентов в каждой группе, на каждом факультете и всего в университете одним запросом.
 -- Подсчитать количество аудиторий по типам и суммарной вместимости в корпусах и всего одним запросом.
 
--- количество студентов в каждой группе
-(SELECT GROUPS.IDGROUP,
-(
-	select count(*) from STUDENT
-	where STUDENT.IDGROUP = GROUPS.IDGROUP
-)[Количество студентов]
-FROM GROUPS
-GROUP BY GROUPS.IDGROUP)
-	
--- количество студентов на каждом факультете
-(SELECT f1.FACULTY,
-(
-	select count(*) from STUDENT
-	join GROUPS on STUDENT.IDGROUP = GROUPS.IDGROUP
-	join FACULTY f2 on GROUPS.FACULTY = f2.FACULTY
-	where f2.FACULTY = f1.FACULTY
-)[Количество студентов]
-FROM FACULTY f1
-GROUP BY f1.FACULTY)
+SELECT COALESCE(GROUPS.FACULTY, 'Всего в университете') AS Факультет,
+	   GROUPS.IDGROUP AS Группа,
+	   COUNT(STUDENT.IDSTUDENT) AS [Количество студентов]
+FROM STUDENT JOIN GROUPS
+ON STUDENT.IDGROUP = GROUPS.IDGROUP 
+GROUP BY ROLLUP(GROUPS.FACULTY, GROUPS.IDGROUP);
 
--- количество студентов в университете
-SELECT COUNT(*) AS 'Количество студентов в университете' FROM STUDENT;
-
-
--- !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
--- Подсчитать количество аудиторий по типам и суммарной вместимости в корпусах
-SELECT AUDITORIUM_TYPE.AUDITORIUM_TYPE,
-(
-	select count(*) from AUDITORIUM
-	where AUDITORIUM.AUDITORIUM_TYPE = AUDITORIUM_TYPE.AUDITORIUM_TYPE
-)[Количество аудиторий]
-FROM AUDITORIUM_TYPE
-GROUP BY AUDITORIUM_TYPE.AUDITORIUM_TYPE;
-
-SELECT AUDITORIUM_TYPE.AUDITORIUM_TYPENAME[Тип аудитории],
-	   SUM(AUDITORIUM_CAPACITY)[Суммарная вместимость аудиторий],
-	   COUNT(*)[Общее количество аудиторий]
-FROM AUDITORIUM 
-JOIN AUDITORIUM_TYPE ON AUDITORIUM.AUDITORIUM_TYPE = AUDITORIUM_TYPE.AUDITORIUM_TYPE
-GROUP BY AUDITORIUM_TYPENAME;
--- !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+SELECT COALESCE(AUDITORIUM_TYPE.AUDITORIUM_TYPE, 'Всего') AS [Тип аудитории],
+	   SUM(AUDITORIUM.AUDITORIUM_CAPACITY) AS [Суммарная вместимость],
+	   COUNT(AUDITORIUM.AUDITORIUM) AS [Количество аудиторий]
+FROM AUDITORIUM_TYPE JOIN AUDITORIUM
+ON AUDITORIUM_TYPE.AUDITORIUM_TYPE = AUDITORIUM.AUDITORIUM_TYPE
+GROUP BY ROLLUP(AUDITORIUM_TYPE.AUDITORIUM_TYPE);
 

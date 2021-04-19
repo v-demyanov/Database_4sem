@@ -41,9 +41,9 @@ SELECT FACULTY_NAME
 FROM FACULTY
 WHERE NOT EXISTS (SELECT * FROM PULPIT WHERE PULPIT.FACULTY = FACULTY.FACULTY);
 
--- 6. На основе таблицы PROGRESS сфор-мировать строку, содержащую средние значения оценок (столбец NOTE) 
+-- 6. На основе таблицы PROGRESS сформировать строку, содержащую средние значения оценок (столбец NOTE) 
 -- по дисциплинам, имеющим следующие коды: ОАиП, БД и СУБД. Примечание: использовать три
--- некоррелированных подзапроса в списке SELECT; в подзапросах при-менить агрегатные функции AVG.
+-- некоррелированных подзапроса в списке SELECT; в подзапросах применить агрегатные функции AVG.
 SELECT TOP(1)
 	(SELECT AVG(NOTE) FROM PROGRESS WHERE SUBJECT LIKE 'ОАиП')[ОАиП],
 	(SELECT AVG(NOTE) FROM PROGRESS WHERE SUBJECT LIKE 'КГ')[КГ],
