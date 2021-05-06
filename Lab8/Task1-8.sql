@@ -37,9 +37,9 @@ CREATE VIEW [Аудитории]
 	FROM AUDITORIUM WHERE AUDITORIUM.AUDITORIUM_TYPE LIKE 'ЛК%';
 
 INSERT  [Аудитории]
-	VALUES('339-1', '333-1');
+	VALUES('339-6', '333-1');
 
-SELECT * FROM [Аудитории];
+SELECT * FROM AUDITORIUM;
 
 -- 4. Разработать и создать представление с именем Лекционные_аудитории.
 -- Представление должно быть построено на основе SELECT-запроса к таблице AUDITORIUM и содержать следующие столбцы:
