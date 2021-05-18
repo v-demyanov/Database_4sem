@@ -4,8 +4,13 @@ USE DVR_UNIVER;
 
 -- С помощью SSMS определить все индексы, которые имеются в БД UNIVER.
 -- Определить, какие из них являются кластеризованными, а какие некластеризованными.
+EXEC SP_HELPINDEX 'AUDITORIUM';
 EXEC SP_HELPINDEX 'AUDITORIUM_TYPE';
-
+EXEC SP_HELPINDEX 'FACULTY';
+EXEC SP_HELPINDEX 'GROUPS';
+EXEC SP_HELPINDEX 'PROFESSION';
+EXEC SP_HELPINDEX 'PROGRESS';
+EXEC SP_HELPINDEX 'PULPIT';
 -- Создать временную локальную таблицу. Заполнить ее данными (не менее 1000 строк).
 USE tempdb;
 
@@ -29,9 +34,15 @@ CHECKPOINT;  --фиксация БД
 DBCC DROPCLEANBUFFERS;  --очистить буферный кэш
 CREATE CLUSTERED INDEX #CL_INDEX_EX1 ON #EX1_EXAMPLE(COL1 ASC);
 
-SELECT * FROM #EX1_EXAMPLE;
+SELECT * FROM #EX1_EXAMPLE WHERE COL1 BETWEEN 1000 AND 3000 ORDER BY COL1;
+
+DROP INDEX #CL_INDEX_EX1 ON #EX1_EXAMPLE;
+
+SET STATISTICS IO ON;
+SET STATISTICS TIME ON;
 
 DROP TABLE #EX1_EXAMPLE;
+DROP INDEX #CL_INDEX_EX1 ON #EX1_EXAMPLE;
 
 -- 2. Создать временную локальную таблицу.
 -- Заполнить ее данными (10000 строк или больше). 
