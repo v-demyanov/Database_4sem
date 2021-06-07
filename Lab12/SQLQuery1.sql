@@ -13,14 +13,14 @@ DECLARE @min_num INT,
 		@flag CHAR = 'c';
 
 SET IMPLICIT_TRANSACTIONS ON
-CREATE TABLE NUMBERS(NUM INT);
+	create table NUMBERS(NUM int);
 	while @i < 10
 	begin
 		insert NUMBERS values(floor(100*rand()));
 		set @i = @i + 1;
 	end;
 
-	SET @min_num = (select min(num) from NUMBERS);
+	set @min_num = (select min(num) from NUMBERS);
 	print 'минимальный элемент в таблице NUMBERS: ' + cast(@min_num as varchar(2));
 
 	if @flag = 'c' commit;
@@ -239,3 +239,4 @@ SELECT * FROM PULPIT;
 
 DELETE PULPIT WHERE PULPIT = 'LAB12_EX8';
 DELETE FACULTY WHERE FACULTY = 'LAB12_EX8';
+

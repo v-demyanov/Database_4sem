@@ -60,7 +60,7 @@ GO
 GO
 
 DECLARE @subj NVARCHAR(20), @pulp NVARCHAR(20);
-DECLARE SubjectCursor CURSOR LOCAL STATIC
+DECLARE SubjectCursor CURSOR LOCAL static
 		FOR SELECT SUBJECT, PULPIT FROM dbo.SUBJECT WHERE PULPIT = 'ЛУ';
 
 OPEN SubjectCursor;
@@ -130,6 +130,7 @@ FETCH SubjectCursor INTO @subj, @pulp;
 UPDATE dbo.SUBJECT SET PULPIT = 'ЛУ' WHERE CURRENT OF SubjectCursor;
 CLOSE SubjectCursor;
 
+
 GO
 
 -- 6. Разработать SELECT-запрос, с помощью которого из таблицы PROGRESS
@@ -197,3 +198,64 @@ GO
 
 DELETE PROGRESS WHERE IDSTUDENT = 1007;
 SELECT * FROM PROGRESS;
+
+-- 8.
+
+DECLARE Ex8Cursor CURSOR LOCAL STATIC 
+	FOR SELECT FACULTY.FACULTY, PULPIT.PULPIT, SUBJECT.SUBJECT, COUNT(TEACHER.TEACHER)
+	FROM FACULTY 
+    JOIN PULPIT ON FACULTY.FACULTY = PULPIT.FACULTY
+	LEFT JOIN SUBJECT ON PULPIT.PULPIT = SUBJECT.PULPIT
+	LEFT JOIN TEACHER ON PULPIT.PULPIT = TEACHER.PULPIT
+	GROUP BY FACULTY.FACULTY, PULPIT.PULPIT, SUBJECT.SUBJECT
+	ORDER BY FACULTY, PULPIT, SUBJECT;
+
+DECLARE @faculty CHAR(10), @pulpit CHAR(10), @subject CHAR(10), @cnt_teacher INT;
+DECLARE @temp_fac CHAR(10), @temp_pul CHAR(10), @list VARCHAR(100), @DISCIPLINES CHAR(12) = 'Дисциплины: ', @DISCIPLINES_NONE CHAR(16) = 'Дисциплины: нет.';
+
+OPEN Ex8Cursor;
+FETCH Ex8Cursor INTO @faculty, @pulpit, @subject, @cnt_teacher;
+WHILE @@FETCH_STATUS = 0
+BEGIN
+	PRINT 'Факультет ' + (@faculty) + ': ';
+	SET @temp_fac = @faculty;
+	-- пока не встретим новый факультет
+	WHILE (@faculty = @temp_fac)
+	BEGIN
+		PRINT CHAR(9) + 'Кафедра ' + RTRIM(@pulpit) + ': ';
+		PRINT CHAR(9) + CHAR(9) + 'Количество преподавателей: ' + RTRIM(@cnt_teacher) + '.';
+		SET @list = @DISCIPLINES;
+
+		IF(@subject IS NOT NULL)
+		BEGIN
+			IF(@list = @DISCIPLINES)
+				SET @list += RTRIM(@subject);
+			ELSE
+				SET @list += ', ' + RTRIM(@subject);
+		END;
+
+		IF (@subject is null) SET @list = @DISCIPLINES_NONE;
+
+		SET @temp_pul = @pulpit;
+		FETCH Ex8Cursor INTO @faculty, @pulpit, @subject, @cnt_teacher;
+		-- пока не встретим новую кафедру
+		WHILE (@pulpit = @temp_pul)
+		BEGIN
+			IF(@subject is not null)
+			BEGIN
+				IF(@list = @DISCIPLINES)
+					SET @list += RTRIM(@subject);
+				ELSE
+					SET @list += ', ' + RTRIM(@subject);
+			END;
+			FETCH Ex8Cursor INTO @faculty, @pulpit, @subject, @cnt_teacher;
+			IF(@@FETCH_STATUS != 0) BREAK;
+		END;
+
+		IF(@list != @DISCIPLINES_NONE) SET @list += '.';
+		PRINT CHAR(9) + CHAR(9) + @list;
+		IF(@@FETCH_STATUS != 0) BREAK;
+	END;
+END;
+CLOSE Ex8Cursor;
+DEALLOCATE Ex8Cursor;

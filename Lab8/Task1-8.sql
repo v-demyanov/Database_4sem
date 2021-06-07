@@ -80,16 +80,31 @@ ALTER VIEW [Количество кафедр] WITH SCHEMABINDING
 
 -- 8*. Разработать представление для таблицы TIMETABLE (лабораторная работа 6) в виде расписания.
 -- Изучить оператор PIVOT и использовать его.
-/*CREATE VIEW Расписание
-	AS SELECT CLASS_NUMBER, [ПН] = 'ПН', [ВТ] = 'ВТ', [СР] = 'СР', [ЧТ] = 'ЧТ', [ПТ] = 'ПТ', [СБ] = 'СБ', [ВС] = 'ВС'
-	FROM TIMETABLE
-	PIVOT( SUM(IDGROUP, TIMETABLE.TEACHER) FOR TIMETABLE.WEEKDAY IN([ПН], [ВТ], [СР], [ЧТ], [ПТ], [СБ], [ВС])) AS test;
+CREATE VIEW Расписание
+	AS SELECT TOP(100) [День], [Пара], [1 группа], [2 группа], [3 группа], [4 группа], [5 группа], [6 группа], [7 группа], [8 группа]
+		FROM (select top(100) WEEKDAY [День],
+				 CLASS_NUMBER [Пара],
+				 cast(IDGROUP as varchar(4)) + ' группа' [Группа],
+				 SUBJECT + ' ' + AUDITORIUM [Дисциплина и аудитория]
+			from TIMETABLE) tbl
+		PIVOT
+			(max([Дисциплина и аудитория]) 
+			for [Группа] -- значения, которые станут именами столбцов
+			in ([1 группа], [2 группа], [3 группа], [4 группа], [5 группа], [6 группа], [7 группа], [8 группа]) -- значения по горизонтали
+			) as pvt
+		ORDER BY 
+		(CASE
+			WHEN [День] LIKE 'пн' THEN 1
+		    WHEN [День] LIKE 'вт' THEN 2
+			WHEN [День] LIKE 'ср' THEN 3
+			WHEN [День] LIKE 'чт' THEN 4
+			WHEN [День] LIKE 'пт' THEN 5
+			WHEN [День] LIKE 'сб' THEN 6
+		 END), [Пара] ASC;
 
+DROP VIEW Расписание;
 SELECT * FROM Расписание;
 
-SELECT * FROM TIMETABLE;
-
---CONCAT(TIMETABLE.AUDITORIUM, TIMETABLE.SUBJECT, TIMETABLE.TEACHER, TIMETABLE.IDGROUP)*/
 
 
 
